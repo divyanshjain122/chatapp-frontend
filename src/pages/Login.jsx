@@ -1,7 +1,9 @@
 import { useFileHandler, useInputValidation } from "6pp";
 import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
+
 import {
   Avatar,
+  Switch,
   Button,
   Container,
   IconButton,
@@ -14,14 +16,27 @@ import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
-import { bgGradient } from "../constants/color";
+// import { bgGradient } from "../constants/color";
 import { server } from "../constants/config";
 import { userExists } from "../redux/reducers/auth";
 import { usernameValidator } from "../utils/validators";
 
 const Login = () => {
+const [themeMode, setThemeMode] = useState('light');
+  const toggleTheme = () => {
+    setThemeMode(themeMode === 'light' ? 'dark' : 'light');
+  };
+
+  const theme = createTheme({
+    palette: {
+      mode: themeMode,
+    },
+  });
+
   const [isLogin, setIsLogin] = useState(true);
+  
   const [isLoading, setIsLoading] = useState(false);
 
   const toggleLogin = () => setIsLogin((prev) => !prev);
@@ -111,11 +126,26 @@ const Login = () => {
   };
 
   return (
-    <div
-      style={{
-        backgroundImage: bgGradient,
-      }}
-    >
+    <ThemeProvider theme={theme}>
+   <div
+        style={{
+          backgroundColor: theme.palette.background.default,
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Switch
+          checked={themeMode === 'dark'}
+          onChange={toggleTheme}
+          name="themeToggle"
+          color="primary"
+          sx={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+          }}
+        />
       <Container
         component={"main"}
         maxWidth="xs"
@@ -325,6 +355,7 @@ const Login = () => {
         </Paper>
       </Container>
     </div>
+    </ThemeProvider>
   );
 };
 

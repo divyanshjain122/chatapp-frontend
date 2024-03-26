@@ -1,6 +1,9 @@
 import { useInputValidation } from "6pp";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { useState } from "react";
 import {
   Button,
+  Switch,
   Container,
   Paper,
   TextField,
@@ -13,6 +16,17 @@ import { bgGradient } from "../../constants/color";
 import { adminLogin, getAdmin } from "../../redux/thunks/admin";
 
 const AdminLogin = () => {
+  const [themeMode, setThemeMode] = useState('light');
+  const toggleTheme = () => {
+    setThemeMode(themeMode === 'light' ? 'dark' : 'light');
+  };
+  const theme = createTheme({
+    palette: {
+      mode: themeMode,
+    },
+  });
+
+
   const { isAdmin } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -31,11 +45,23 @@ const AdminLogin = () => {
   if (isAdmin) return <Navigate to="/admin/dashboard" />;
 
   return (
+    <ThemeProvider theme={theme}>
     <div
       style={{
-        backgroundImage: bgGradient,
+        backgroundColor: theme.palette.background.default,
       }}
     >
+      <Switch
+          checked={themeMode === 'dark'}
+          onChange={toggleTheme}
+          name="themeToggle"
+          color="primary"
+          sx={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+          }}
+        />
       <Container
         component={"main"}
         maxWidth="xs"
@@ -89,6 +115,7 @@ const AdminLogin = () => {
         </Paper>
       </Container>
     </div>
+    </ThemeProvider>
   );
 };
 
